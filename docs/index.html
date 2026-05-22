@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="refresh" content="300">
+<title>Viral Content AI — Live Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, sans-serif; background: #0a0a0a; color: #f0f0f0; }
+.header { background: #16213e; padding: 32px 40px; border-bottom: 2px solid #e94560; display: flex; justify-content: space-between; align-items: center; }
+.header-left h1 { color: #e94560; font-size: 1.6rem; margin-bottom: 4px; }
+.header-left p { color: #888; font-size: 0.8rem; }
+.header-right { text-align: right; }
+.live-badge { background: #e94560; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; display: inline-block; margin-bottom: 4px; }
+.last-update { color: #555; font-size: 0.75rem; }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.stat-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px; text-align: center; }
+.stat-value { font-size: 2rem; font-weight: bold; color: #e94560; }
+.stat-label { font-size: 0.75rem; color: #888; margin-top: 4px; }
+.section { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+.section-title { color: #e94560; font-size: 1rem; font-weight: bold; margin-bottom: 16px; border-bottom: 1px solid #2a2a2a; padding-bottom: 8px; display: flex; justify-content: space-between; }
+.section-title span { color: #555; font-size: 0.75rem; font-weight: normal; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 10px 12px; font-size: 0.75rem; color: #888; text-transform: uppercase; border-bottom: 1px solid #2a2a2a; }
+td { padding: 10px 12px; font-size: 0.85rem; border-bottom: 1px solid #1a1a1a; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #222; }
+.score-bar { display: flex; align-items: center; gap: 8px; }
+.bar-bg { background: #2a2a2a; border-radius: 4px; height: 6px; width: 80px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; background: #e94560; }
+.bar-fill.high { background: #e94560; }
+.bar-fill.medium { background: #EF9F27; }
+.bar-fill.low { background: #555; }
+.potential-badge { padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
+.EXPLOSIVE { background: #4a1b0c; color: #F09595; border: 1px solid #A32D2D; }
+.HIGH { background: #0f2a1a; color: #97C459; border: 1px solid #3B6D11; }
+.MEDIUM { background: #1a1a0a; color: #FAC775; border: 1px solid #BA7517; }
+.LOW { background: #1a1a1a; color: #888; border: 1px solid #444; }
+.region-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.region-tag { background: #16213e; color: #a0c4ff; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; border: 1px solid #378ADD; }
+.region-tag.indonesia { background: #1a0a0a; color: #F09595; border: 1px solid #e94560; }
+.content-box { background: #111; border-radius: 6px; padding: 10px; font-size: 0.8rem; color: #ccc; line-height: 1.5; margin-top: 6px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.tab { padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; border: 1px solid #333; color: #888; background: #111; }
+.tab.active { background: #e94560; color: white; border-color: #e94560; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.trend-up { color: #97C459; }
+.trend-down { color: #F09595; }
+footer { text-align: center; padding: 32px; color: #444; font-size: 0.75rem; border-top: 1px solid #1a1a1a; }
+.loading { text-align: center; padding: 40px; color: #555; }
+.error-msg { text-align: center; padding: 40px; color: #F09595; }
+.source-tag { background: #2a2a2a; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; color: #888; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Viral Content AI — Live Dashboard</h1>
+    <p>by Daffa Novendra Aditama · AI Automation Engineer</p>
+  </div>
+  <div class="header-right">
+    <div class="live-badge">LIVE DATA</div>
+    <div class="last-update" id="lastUpdate">Loading...</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-value" id="statTotal">-</div><div class="stat-label">Topics Analyzed Today</div></div>
+    <div class="stat-card"><div class="stat-value" id="statAvg">-</div><div class="stat-label">Avg Virality Score</div></div>
+    <div class="stat-card"><div class="stat-value" id="statExplosive">-</div><div class="stat-label">EXPLOSIVE Topics</div></div>
+    <div class="stat-card"><div class="stat-value" id="statIndonesia">-</div><div class="stat-label">Indonesia Relevant</div></div>
+    <div class="stat-card"><div class="stat-value" id="statTop">-</div><div class="stat-label">Top Score Today</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      Virality Scoreboard
+      <span id="scoreboardDate"></span>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('all')">All Topics</div>
+      <div class="tab" onclick="switchTab('explosive')">EXPLOSIVE</div>
+      <div class="tab" onclick="switchTab('high')">HIGH</div>
+      <div class="tab" onclick="switchTab('indonesia')">Indonesia</div>
+    </div>
+    <div id="tableContainer">
+      <div class="loading">Loading data...</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Top 3 Generated Content Today</div>
+    <div id="contentContainer">
+      <div class="loading">Loading content...</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>Viral Content AI Engine · Powered by Groq LLaMA 3.3 70B · Pipedream · GitHub Pages</p>
+  <p style="margin-top:4px">Auto-refreshes every 5 minutes · Data updates daily at 07:00 AM WIB</p>
+</footer>
+
+<script>
+var SHEETS_ID = 'GANTI_DENGAN_VIRAL_SHEETS_ID_KAMU';
+var API_KEY = 'GANTI_DENGAN_GOOGLE_API_KEY_KAMU';
+
+var allData = [];
+var contentData = [];
+var activeTab = 'all';
+
+function switchTab(tab) {
+  activeTab = tab;
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].classList.remove('active');
+  }
+  event.target.classList.add('active');
+  renderTable();
+}
+
+function getBarClass(score) {
+  if (score >= 80) return 'high';
+  if (score >= 60) return 'medium';
+  return 'low';
+}
+
+function renderTable() {
+  var filtered = allData;
+
+  if (activeTab === 'explosive') {
+    filtered = allData.filter(function(r) { return r.potential === 'EXPLOSIVE'; });
+  } else if (activeTab === 'high') {
+    filtered = allData.filter(function(r) { return r.potential === 'HIGH'; });
+  } else if (activeTab === 'indonesia') {
+    filtered = allData.filter(function(r) { return r.regions && r.regions.indexOf('Indonesia') !== -1; });
+  }
+
+  if (filtered.length === 0) {
+    document.getElementById('tableContainer').innerHTML = '<div class="loading">No data for this filter.</div>';
+    return;
+  }
+
+  var html = '<table>';
+  html += '<thead><tr>';
+  html += '<th>#</th>';
+  html += '<th>Topic</th>';
+  html += '<th>Score</th>';
+  html += '<th>Potential</th>';
+  html += '<th>Regions</th>';
+  html += '<th>Source</th>';
+  html += '</tr></thead><tbody>';
+
+  for (var i = 0; i < filtered.length; i++) {
+    var row = filtered[i];
+    var barClass = getBarClass(row.score);
+    var regions = (row.regions || 'Global').split('|').map(function(r) { return r.trim(); });
+
+    html += '<tr>';
+    html += '<td style="color:#555">' + (i + 1) + '</td>';
+    html += '<td>';
+    html += '<div style="font-weight:500;margin-bottom:4px">' + row.topic + '</div>';
+    html += '<div style="color:#666;font-size:0.75rem">' + (row.reason || '') + '</div>';
+    html += '</td>';
+    html += '<td>';
+    html += '<div class="score-bar">';
+    html += '<span style="font-weight:bold;color:#e94560;min-width:28px">' + row.score + '</span>';
+    html += '<div class="bar-bg"><div class="bar-fill ' + barClass + '" style="width:' + row.score + '%"></div></div>';
+    html += '</div>';
+    html += '</td>';
+    html += '<td><span class="potential-badge ' + row.potential + '">' + row.potential + '</span></td>';
+    html += '<td><div class="region-tags">';
+    for (var j = 0; j < regions.length; j++) {
+      var isIndo = regions[j].indexOf('Indonesia') !== -1;
+      html += '<span class="region-tag' + (isIndo ? ' indonesia' : '') + '">' + regions[j] + '</span>';
+    }
+    html += '</div></td>';
+    html += '<td><span class="source-tag">' + (row.source || '') + '</span></td>';
+    html += '</tr>';
+  }
+
+  html += '</tbody></table>';
+  document.getElementById('tableContainer').innerHTML = html;
+}
+
+function renderContent() {
+  if (contentData.length === 0) {
+    document.getElementById('contentContainer').innerHTML = '<div class="loading">No content generated yet today.</div>';
+    return;
+  }
+
+  var html = '';
+  var medals = ['#1', '#2', '#3'];
+
+  for (var i = 0; i < Math.min(contentData.length, 3); i++) {
+    var item = contentData[i];
+    html += '<div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #2a2a2a">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    html += '<div style="font-weight:bold;color:#e94560">' + medals[i] + ' ' + item.topic + '</div>';
+    html += '<div style="font-size:0.75rem;color:#555">Score: ' + item.score + '/100</div>';
+    html += '</div>';
+    html += '<div style="font-size:0.85rem;color:#888;margin-bottom:6px">Headline: ' + item.headline + '</div>';
+    if (item.image_url) {
+      html += '<img src="' + item.image_url + '" style="width:100%;max-width:400px;border-radius:8px;margin-top:8px" loading="lazy">';
+    }
+    html += '</div>';
+  }
+
+  document.getElementById('contentContainer').innerHTML = html;
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = allData.length;
+
+  var totalScore = 0;
+  var explosiveCount = 0;
+  var indonesiaCount = 0;
+  var topScore = 0;
+
+  for (var i = 0; i < allData.length; i++) {
+    totalScore += allData[i].score;
+    if (allData[i].potential === 'EXPLOSIVE') explosiveCount++;
+    if (allData[i].regions && allData[i].regions.indexOf('Indonesia') !== -1) indonesiaCount++;
+    if (allData[i].score > topScore) topScore = allData[i].score;
+  }
+
+  document.getElementById('statAvg').textContent = allData.length > 0 ? Math.round(totalScore / allData.length) : 0;
+  document.getElementById('statExplosive').textContent = explosiveCount;
+  document.getElementById('statIndonesia').textContent = indonesiaCount;
+  document.getElementById('statTop').textContent = topScore;
+}
+
+async function loadData() {
+  try {
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('scoreboardDate').textContent = today;
+    document.getElementById('lastUpdate').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+
+    // Load trends_raw
+    var trendsUrl = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEETS_ID + '/values/trends_raw!A:H?key=' + API_KEY;
+    var trendsRes = await fetch(trendsUrl);
+    var trendsJson = await trendsRes.json();
+    var trendsRows = (trendsJson.values || []).slice(1);
+
+    // Filter today only
+    allData = [];
+    for (var i = 0; i < trendsRows.length; i++) {
+      var row = trendsRows[i];
+      if (row[0] === today) {
+        allData.push({
+          date: row[0] || '',
+          source: row[1] || '',
+          topic: row[2] || '',
+          score: parseInt(row[3] || 0),
+          potential: row[4] || 'MEDIUM',
+          reason: row[5] || '',
+          url: row[6] || '',
+          regions: row[7] || 'Global'
+        });
+      }
+    }
+
+    // Sort by score
+    allData.sort(function(a, b) { return b.score - a.score; });
+
+    // Load content_generated
+    var contentUrl = 'https://sheets.googleapis.com/v4/spreadsheets/' + SHEETS_ID + '/values/content_generated!A:J?key=' + API_KEY;
+    var contentRes = await fetch(contentUrl);
+    var contentJson = await contentRes.json();
+    var contentRows = (contentJson.values || []).slice(1);
+
+    contentData = [];
+    for (var j = 0; j < contentRows.length; j++) {
+      var crow = contentRows[j];
+      if (crow[0] === today) {
+        contentData.push({
+          date: crow[0] || '',
+          topic: crow[1] || '',
+          score: parseInt(crow[2] || 0),
+          headline: crow[3] || '',
+          telegram: crow[4] || '',
+          image_url: crow[7] || ''
+        });
+      }
+    }
+
+    updateStats();
+    renderTable();
+    renderContent();
+
+  } catch (err) {
+    document.getElementById('tableContainer').innerHTML = '<div class="error-msg">Error loading data: ' + err.message + '</div>';
+    console.log('Error:', err);
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
