@@ -253,7 +253,7 @@ async function loadData() {
     allData = [];
     for (var i = 0; i < trendsRows.length; i++) {
       var row = trendsRows[i];
-      if (row[0] === today) {
+      if (row[2]) {
         allData.push({
           date: row[0] || '',
           source: row[1] || '',
@@ -279,7 +279,7 @@ async function loadData() {
     contentData = [];
     for (var j = 0; j < contentRows.length; j++) {
       var crow = contentRows[j];
-      if (crow[0] === today) {
+      if (crow[1]) {
         contentData.push({
           date: crow[0] || '',
           topic: crow[1] || '',
