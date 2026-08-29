@@ -8,7 +8,7 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: system-ui, sans-serif; background: #0a0a0a; color: #f0f0f0; }
-.header { background: #16213e; padding: 32px 40px; border-bottom: 2px solid #e94560; display: flex; justify-content: space-between; align-items: center; }
+.header { background: #16213e; padding: 32px 40px; border-bottom: 2px solid #e94560; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .header-left h1 { color: #e94560; font-size: 1.6rem; margin-bottom: 4px; }
 .header-left p { color: #888; font-size: 0.8rem; }
 .header-right { text-align: right; }
@@ -20,7 +20,7 @@ body { font-family: system-ui, sans-serif; background: #0a0a0a; color: #f0f0f0; 
 .stat-value { font-size: 2rem; font-weight: bold; color: #e94560; }
 .stat-label { font-size: 0.75rem; color: #888; margin-top: 4px; }
 .section { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-.section-title { color: #e94560; font-size: 1rem; font-weight: bold; margin-bottom: 16px; border-bottom: 1px solid #2a2a2a; padding-bottom: 8px; display: flex; justify-content: space-between; }
+.section-title { color: #e94560; font-size: 1rem; font-weight: bold; margin-bottom: 16px; border-bottom: 1px solid #2a2a2a; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 .section-title span { color: #555; font-size: 0.75rem; font-weight: normal; }
 table { width: 100%; border-collapse: collapse; }
 th { text-align: left; padding: 10px 12px; font-size: 0.75rem; color: #888; text-transform: uppercase; border-bottom: 1px solid #2a2a2a; }
@@ -42,7 +42,7 @@ tr:hover td { background: #222; }
 .region-tag { background: #16213e; color: #a0c4ff; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; border: 1px solid #378ADD; }
 .region-tag.indonesia { background: #1a0a0a; color: #F09595; border: 1px solid #e94560; }
 .content-box { background: #111; border-radius: 6px; padding: 10px; font-size: 0.8rem; color: #ccc; line-height: 1.5; margin-top: 6px; }
-.tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
 .tab { padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; border: 1px solid #333; color: #888; background: #111; }
 .tab.active { background: #e94560; color: white; border-color: #e94560; }
 .tab-content { display: none; }
@@ -53,6 +53,32 @@ footer { text-align: center; padding: 32px; color: #444; font-size: 0.75rem; bor
 .loading { text-align: center; padding: 40px; color: #555; }
 .error-msg { text-align: center; padding: 40px; color: #F09595; }
 .source-tag { background: #2a2a2a; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; color: #888; }
+
+/* Pagination */
+.pagination-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; flex-wrap: wrap; gap: 12px; }
+.pagination-info { font-size: 0.75rem; color: #666; }
+.pagination-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.page-btn { background: #111; border: 1px solid #333; color: #ccc; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
+.page-btn:hover:not(:disabled) { border-color: #e94560; color: #e94560; }
+.page-btn:disabled { opacity: 0.35; cursor: default; }
+.page-btn.active { background: #e94560; border-color: #e94560; color: white; font-weight: bold; }
+.page-jump { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #888; }
+.page-jump input { width: 56px; background: #111; border: 1px solid #333; color: #f0f0f0; border-radius: 6px; padding: 5px 6px; font-size: 0.8rem; text-align: center; }
+
+/* Content cards / image loading */
+.content-card { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2a2a; }
+.content-card:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.content-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 12px; flex-wrap: wrap; }
+.content-title { font-weight: bold; color: #e94560; }
+.content-meta { text-align: right; font-size: 0.75rem; color: #555; white-space: nowrap; }
+.content-meta .date-tag { display: block; color: #888; margin-top: 2px; }
+.content-headline { font-size: 0.85rem; color: #888; margin-bottom: 6px; }
+.content-image-wrap { width: 100%; max-width: 400px; margin-top: 8px; }
+.content-image { width: 100%; max-width: 400px; border-radius: 8px; display: block; background: #111; min-height: 180px; object-fit: cover; }
+.image-fallback { width: 100%; max-width: 400px; min-height: 180px; border-radius: 8px; background: #111; border: 1px dashed #333; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 6px; color: #555; font-size: 0.75rem; text-align: center; padding: 16px; }
+.image-fallback .icon { font-size: 1.4rem; }
+.image-skeleton { width: 100%; max-width: 400px; min-height: 180px; border-radius: 8px; background: linear-gradient(90deg, #111 25%, #1c1c1c 37%, #111 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; }
+@keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
 </style>
 </head>
 <body>
@@ -84,14 +110,15 @@ footer { text-align: center; padding: 32px; color: #444; font-size: 0.75rem; bor
       <span id="scoreboardDate"></span>
     </div>
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('all')">All Topics</div>
-      <div class="tab" onclick="switchTab('explosive')">EXPLOSIVE</div>
-      <div class="tab" onclick="switchTab('high')">HIGH</div>
-      <div class="tab" onclick="switchTab('indonesia')">Indonesia</div>
+      <div class="tab active" data-tab="all" onclick="switchTab('all', event)">All Topics</div>
+      <div class="tab" data-tab="explosive" onclick="switchTab('explosive', event)">EXPLOSIVE</div>
+      <div class="tab" data-tab="high" onclick="switchTab('high', event)">HIGH</div>
+      <div class="tab" data-tab="indonesia" onclick="switchTab('indonesia', event)">Indonesia</div>
     </div>
     <div id="tableContainer">
       <div class="loading">Loading data...</div>
     </div>
+    <div id="paginationContainer"></div>
   </div>
 
   <div class="section">
@@ -104,7 +131,7 @@ footer { text-align: center; padding: 32px; color: #444; font-size: 0.75rem; bor
 </div>
 
 <footer>
-  <p>Viral Content AI Engine · Powered by Groq LLaMA 3.3 70B · Pipedream · GitHub Pages</p>
+  <p>Viral Content AI Engine · Powered by Groq openai/gpt-oss-120b · Pipedream · GitHub Pages</p>
   <p style="margin-top:4px">Auto-refreshes every 5 minutes · Data updates daily at 07:00 AM WIB</p>
 </footer>
 
@@ -116,14 +143,31 @@ var allData = [];
 var contentData = [];
 var activeTab = 'all';
 
-function switchTab(tab) {
+// Pagination state
+var ITEMS_PER_PAGE = 100;
+var currentPage = 1;
+
+function switchTab(tab, evt) {
   activeTab = tab;
+  currentPage = 1; // reset to page 1 whenever the filter changes
   var tabs = document.querySelectorAll('.tab');
   for (var i = 0; i < tabs.length; i++) {
     tabs[i].classList.remove('active');
   }
-  event.target.classList.add('active');
+  if (evt && evt.target) {
+    evt.target.classList.add('active');
+  } else {
+    var match = document.querySelector('.tab[data-tab="' + tab + '"]');
+    if (match) match.classList.add('active');
+  }
   renderTable();
+}
+
+function goToPage(page) {
+  currentPage = page;
+  renderTable();
+  var section = document.getElementById('tableContainer');
+  if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function getBarClass(score) {
@@ -132,21 +176,88 @@ function getBarClass(score) {
   return 'low';
 }
 
-function renderTable() {
-  var filtered = allData;
-
+function getFilteredData() {
   if (activeTab === 'explosive') {
-    filtered = allData.filter(function(r) { return r.potential === 'EXPLOSIVE'; });
+    return allData.filter(function(r) { return r.potential === 'EXPLOSIVE'; });
   } else if (activeTab === 'high') {
-    filtered = allData.filter(function(r) { return r.potential === 'HIGH'; });
+    return allData.filter(function(r) { return r.potential === 'HIGH'; });
   } else if (activeTab === 'indonesia') {
-    filtered = allData.filter(function(r) { return r.regions && r.regions.indexOf('Indonesia') !== -1; });
+    return allData.filter(function(r) { return r.regions && r.regions.indexOf('Indonesia') !== -1; });
   }
+  return allData;
+}
 
-  if (filtered.length === 0) {
-    document.getElementById('tableContainer').innerHTML = '<div class="loading">No data for this filter.</div>';
+function renderPagination(totalItems, totalPages) {
+  var container = document.getElementById('paginationContainer');
+
+  if (totalItems === 0 || totalPages <= 1) {
+    container.innerHTML = '';
     return;
   }
+
+  var startItem = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+  var endItem = Math.min(currentPage * ITEMS_PER_PAGE, totalItems);
+
+  var html = '<div class="pagination-bar">';
+  html += '<div class="pagination-info">Showing ' + startItem + '–' + endItem + ' of ' + totalItems + ' topics · ' + ITEMS_PER_PAGE + ' per page</div>';
+  html += '<div class="pagination-controls">';
+
+  html += '<button class="page-btn" onclick="goToPage(1)" ' + (currentPage === 1 ? 'disabled' : '') + '>« First</button>';
+  html += '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '>‹ Prev</button>';
+
+  // Windowed page numbers around current page
+  var windowSize = 2;
+  var startPage = Math.max(1, currentPage - windowSize);
+  var endPage = Math.min(totalPages, currentPage + windowSize);
+
+  if (startPage > 1) {
+    html += '<button class="page-btn" onclick="goToPage(1)">1</button>';
+    if (startPage > 2) html += '<span style="color:#444">…</span>';
+  }
+
+  for (var p = startPage; p <= endPage; p++) {
+    html += '<button class="page-btn' + (p === currentPage ? ' active' : '') + '" onclick="goToPage(' + p + ')">' + p + '</button>';
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) html += '<span style="color:#444">…</span>';
+    html += '<button class="page-btn" onclick="goToPage(' + totalPages + ')">' + totalPages + '</button>';
+  }
+
+  html += '<button class="page-btn" onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === totalPages ? 'disabled' : '') + '>Next ›</button>';
+  html += '<button class="page-btn" onclick="goToPage(' + totalPages + ')" ' + (currentPage === totalPages ? 'disabled' : '') + '>Last »</button>';
+
+  html += '<span class="page-jump">Go to <input type="number" id="pageJumpInput" min="1" max="' + totalPages + '" value="' + currentPage + '" onkeydown="if(event.key===\'Enter\'){jumpToPage(' + totalPages + ')}"> <button class="page-btn" onclick="jumpToPage(' + totalPages + ')">Go</button></span>';
+
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+function jumpToPage(totalPages) {
+  var input = document.getElementById('pageJumpInput');
+  var val = parseInt(input.value || '1', 10);
+  if (isNaN(val)) val = 1;
+  if (val < 1) val = 1;
+  if (val > totalPages) val = totalPages;
+  goToPage(val);
+}
+
+function renderTable() {
+  var filtered = getFilteredData();
+  var totalItems = filtered.length;
+  var totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
+
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  if (totalItems === 0) {
+    document.getElementById('tableContainer').innerHTML = '<div class="loading">No data for this filter.</div>';
+    document.getElementById('paginationContainer').innerHTML = '';
+    return;
+  }
+
+  var startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  var pageItems = filtered.slice(startIdx, startIdx + ITEMS_PER_PAGE);
 
   var html = '<table>';
   html += '<thead><tr>';
@@ -158,13 +269,13 @@ function renderTable() {
   html += '<th>Source</th>';
   html += '</tr></thead><tbody>';
 
-  for (var i = 0; i < filtered.length; i++) {
-    var row = filtered[i];
+  for (var i = 0; i < pageItems.length; i++) {
+    var row = pageItems[i];
     var barClass = getBarClass(row.score);
     var regions = (row.regions || 'Global').split('|').map(function(r) { return r.trim(); });
 
     html += '<tr>';
-    html += '<td style="color:#555">' + (i + 1) + '</td>';
+    html += '<td style="color:#555">' + (startIdx + i + 1) + '</td>';
     html += '<td>';
     html += '<div style="font-weight:500;margin-bottom:4px">' + row.topic + '</div>';
     html += '<div style="color:#666;font-size:0.75rem">' + (row.reason || '') + '</div>';
@@ -188,6 +299,34 @@ function renderTable() {
 
   html += '</tbody></table>';
   document.getElementById('tableContainer').innerHTML = html;
+
+  renderPagination(totalItems, totalPages);
+}
+
+// Format a raw sheet date value into something readable; falls back to the raw string.
+function formatContentDate(rawDate) {
+  if (!rawDate) return 'Date unknown';
+  var d = new Date(rawDate);
+  if (isNaN(d.getTime())) return rawDate; // sheet already had a non-parseable/custom format
+  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+// Builds the image element markup with a loading skeleton and a graceful
+// fallback if the generated image URL is missing, still rendering, or 404s.
+function buildImageMarkup(imageUrl, topic) {
+  if (!imageUrl) {
+    return '<div class="image-fallback"><div class="icon">🖼️</div><div>No image was generated for this topic yet</div></div>';
+  }
+  var safeAlt = (topic || 'Generated content image').replace(/"/g, '&quot;');
+  var uid = 'img_' + Math.random().toString(36).slice(2, 10);
+  return (
+    '<div class="content-image-wrap">' +
+      '<div class="image-skeleton" id="skeleton_' + uid + '"></div>' +
+      '<img id="' + uid + '" class="content-image" style="display:none" src="' + imageUrl + '" alt="' + safeAlt + '" loading="lazy" referrerpolicy="no-referrer" ' +
+        'onload="document.getElementById(\'skeleton_' + uid + '\').style.display=\'none\'; this.style.display=\'block\';" ' +
+        'onerror="document.getElementById(\'skeleton_' + uid + '\').outerHTML=\'<div class=&quot;image-fallback&quot;><div class=&quot;icon&quot;>&#9888;&#65039;</div><div>Image failed to load (source may still be generating or is unreachable)</div></div>\'; this.remove();">' +
+    '</div>'
+  );
 }
 
 function renderContent() {
@@ -201,15 +340,13 @@ function renderContent() {
 
   for (var i = 0; i < Math.min(contentData.length, 3); i++) {
     var item = contentData[i];
-    html += '<div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #2a2a2a">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    html += '<div style="font-weight:bold;color:#e94560">' + medals[i] + ' ' + item.topic + '</div>';
-    html += '<div style="font-size:0.75rem;color:#555">Score: ' + item.score + '/100</div>';
+    html += '<div class="content-card">';
+    html += '<div class="content-card-top">';
+    html += '<div class="content-title">' + medals[i] + ' ' + item.topic + '</div>';
+    html += '<div class="content-meta">Score: ' + item.score + '/100<span class="date-tag">Generated: ' + formatContentDate(item.date) + '</span></div>';
     html += '</div>';
-    html += '<div style="font-size:0.85rem;color:#888;margin-bottom:6px">Headline: ' + item.headline + '</div>';
-    if (item.image_url) {
-      html += '<img src="' + item.image_url + '" style="width:100%;max-width:400px;border-radius:8px;margin-top:8px" loading="lazy">';
-    }
+    html += '<div class="content-headline">Headline: ' + item.headline + '</div>';
+    html += buildImageMarkup(item.image_url, item.topic);
     html += '</div>';
   }
 
@@ -291,6 +428,7 @@ async function loadData() {
       }
     }
 
+    currentPage = 1;
     updateStats();
     renderTable();
     renderContent();
