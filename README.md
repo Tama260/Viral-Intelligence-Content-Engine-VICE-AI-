@@ -25,7 +25,7 @@ Every morning at 07:00 AM WIB, this pipeline runs automatically:
 ↓
 [fetch_reddit_trends] — collect 200+ topics
 ↓
-[ai_virality_scorer] — Groq LLaMA 3.3 70B scores each topic 0-100
+[ai_virality_scorer] — Groq `openai/gpt-oss-120b` scores each topic 0-100
 ↓
 [generate_viral_content] — full content package per top 3 topic
 ↓
@@ -40,10 +40,12 @@ Every morning at 07:00 AM WIB, this pipeline runs automatically:
 ## Live Dashboard Features
 
 - **Real-time Virality Scoreboard** — all topics ranked by score with visual bar
-- **Filter by Potential** — EXPLOSIVE / HIGH / MEDIUM tabs
+- **Paginated results (100 per page)** — the scoreboard used to render all 1,500+ rows in a single unbroken list; it now paginates 100 topics at a time with first/prev/next/last controls and a "jump to page" input, so the page stays fast and scannable no matter how many topics were scanned that day
+- **Filter by Potential** — EXPLOSIVE / HIGH / MEDIUM tabs (pagination resets to page 1 whenever you switch tabs)
 - **Indonesia Filter** — topics relevant to Indonesian audience highlighted
 - **Region Tags** — shows which countries each topic is viral in
-- **Top 3 Content Preview** — generated content with AI visuals
+- **Top 3 Content Preview** — generated content with AI visuals, plus the exact **generation date** on each card so you can track when a piece was produced
+- **Resilient image loading** — generated images now show a loading skeleton while they render and fall back to a clear "image unavailable" placeholder instead of a broken/half-loaded icon if the source (Pollinations.ai) is slow or unreachable
 - **Auto-refresh** every 5 minutes
 
 ---
@@ -53,7 +55,7 @@ Every morning at 07:00 AM WIB, this pipeline runs automatically:
 | Category | Tools |
 |---|---|
 | Workflow Automation | Pipedream |
-| AI & LLM | Groq AI (LLaMA 3.3 70B) |
+| AI & LLM | Groq AI (`openai/gpt-oss-120b`) |
 | Data Sources | Reddit RSS, HackerNews API |
 | Image Generation | Pollinations.ai |
 | Database | Google Sheets API |
@@ -62,6 +64,8 @@ Every morning at 07:00 AM WIB, this pipeline runs automatically:
 | Auth | Google Service Account, JWT |
 
 **Cost: $0/month** — 100% free tier infrastructure
+
+> **Model update:** Groq deprecated `llama-3.3-70b-versatile` and `llama-3.1-8b-instant` on the free/developer tier. The pipeline now runs on **`openai/gpt-oss-120b`** — it's Groq's officially recommended replacement, still fully available on the free tier, and benchmarks above the old Llama 3.3 70B on reasoning, coding, and math while running faster on Groq's LPU hardware. If you need something even lighter/cheaper on rate limits, `openai/gpt-oss-20b` or `qwen/qwen3.6-27b` are the other free-tier options Groq points to — but 120B is the most capable of the three, so it's the default here.
 
 ---
 
@@ -121,6 +125,7 @@ Every morning at 07:00 AM WIB, this pipeline runs automatically:
 ### Environment Variables
 
 GROQ_API_KEY                = gsk_xxxx
+GROQ_MODEL                  = openai/gpt-oss-120b
 TELEGRAM_BOT_TOKEN          = xxxx:xxxx
 TELEGRAM_CHAT_ID            = -100xxxxxxx
 VIRAL_SHEETS_ID             = spreadsheet_id
@@ -128,10 +133,15 @@ GOOGLE_SERVICE_ACCOUNT_JSON = {...}
 
 ### Deployment
 1. Clone this repo
-2. Set environment variables in Pipedream
+2. Set environment variables in Pipedream (make sure `GROQ_MODEL` is set to `openai/gpt-oss-120b` in every step that calls Groq — `ai_virality_scorer` and `generate_viral_content`)
 3. Deploy workflow
 4. Set trigger to Daily 07:00 AM Asia/Jakarta
 5. Dashboard auto-updates after first run
+
+### Known maintenance items to check periodically
+- **Groq model deprecations**: Groq occasionally sunsets free-tier models with an email notice. Check `console.groq.com/docs/deprecations` every few months and re-point `GROQ_MODEL` if `openai/gpt-oss-120b` is ever retired.
+- **Pollinations.ai image generation**: image URLs are generated on request and can occasionally time out. The dashboard now degrades gracefully (skeleton → fallback placeholder) if an image fails, but if failures become frequent, check whether `generate_viral_content` needs a retry/backoff step before writing the `image_url` to Sheets.
+- **Sheet row growth**: `trends_raw` grows by ~200 rows/day. The dashboard paginates client-side, but if the sheet gets very large, consider archiving rows older than N days to keep the `A:H` fetch fast.
 
 ---
 
@@ -145,4 +155,4 @@ AI Automation Engineer | Banten, Indonesia
 
 ---
 
-*Built with Groq AI · Pipedream · Pollinations.ai · GitHub Pages*
+*Built with Groq AI (openai/gpt-oss-120b) · Pipedream · Pollinations.ai · GitHub Pages*
